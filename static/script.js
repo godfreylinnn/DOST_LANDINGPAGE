@@ -26,7 +26,7 @@ function toggleSidebar() {
 
 function facebookEmbedUrl(pageUrl) {
   const encodedUrl = encodeURIComponent(pageUrl);
-  return `https://www.facebook.com/plugins/page.php?href=${encodedUrl}&tabs=timeline&width=500&height=600&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=false`;
+  return `https://www.facebook.com/plugins/page.php?href=${encodedUrl}&tabs=timeline&width=340&height=600&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=false`;
 }
 
 function setFacebookFrame(pageUrl) {
@@ -34,9 +34,12 @@ function setFacebookFrame(pageUrl) {
   if (!facebookFrame || !pageUrl) return;
 
   const nextUrl = facebookEmbedUrl(pageUrl);
-  if (facebookFrame.src !== nextUrl) {
-    facebookFrame.src = nextUrl;
+  if (facebookFrame.dataset.currentSrc === nextUrl) {
+    return;
   }
+
+  facebookFrame.dataset.currentSrc = nextUrl;
+  facebookFrame.setAttribute("src", nextUrl);
 }
 
 function setText(selector, value) {

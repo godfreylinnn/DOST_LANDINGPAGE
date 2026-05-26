@@ -26,7 +26,17 @@ function toggleSidebar() {
 
 function facebookEmbedUrl(pageUrl) {
   const encodedUrl = encodeURIComponent(pageUrl);
-  return `https://www.facebook.com/plugins/page.php?href=${encodedUrl}&tabs=timeline&width=340&height=600&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=false`;
+  return `https://www.facebook.com/plugins/page.php?href=${encodedUrl}&tabs=timeline&width=500&height=600&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=false`;
+}
+
+function setFacebookFrame(pageUrl) {
+  const facebookFrame = document.querySelector("#facebook-frame");
+  if (!facebookFrame || !pageUrl) return;
+
+  const nextUrl = facebookEmbedUrl(pageUrl);
+  if (facebookFrame.src !== nextUrl) {
+    facebookFrame.src = nextUrl;
+  }
 }
 
 function setText(selector, value) {
@@ -206,10 +216,8 @@ async function loadProfile() {
   setLink("#facebook-link", profile.facebook);
   setLink("#facebook-panel-link", profile.facebook);
 
-  const facebookFrame = document.querySelector("#facebook-frame");
-  if (facebookFrame && profile.facebook) {
-    facebookFrame.src = facebookEmbedUrl(profile.facebook);
-  }
+  const fallbackFacebook = document.querySelector("#facebook-frame")?.dataset.pageUrl;
+  setFacebookFrame(profile.facebook || fallbackFacebook);
 
   setImage("#top-brand-logo", profile.assets?.logo, profile.assets?.logoAlt || "DOST logo");
   if (profile.assets?.background) {

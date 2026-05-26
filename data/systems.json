@@ -1,0 +1,26 @@
+[
+  {
+    "name": "",
+    "description": "",
+    "url": "https://cest.dost8.ph/",
+    "image": "assets/CEST.jpg",
+    "status": "Available",
+    "category": "Online Service"
+  },
+  {
+    "name": "",
+    "description": "",
+    "url": "https://setup.dost-esamar.org/",
+    "image": "assets/SETUP.png",
+    "status": "Available",
+    "category": "Online Service"
+  },
+  {
+    "name": "",
+    "description": "",
+    "url": "https://funds.dost-esamar.org/",
+    "image": "assets/Funds.png",
+    "status": "Available",
+    "category": "Internal Tool"
+  }
+]

@@ -1,0 +1,4 @@
+Flask
+gunicorn
+supabase==2.18.1
+python-dotenv

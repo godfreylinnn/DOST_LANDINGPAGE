@@ -1,0 +1,24 @@
+{
+    "PM-DOST-VIII (Quality Management / CSM / Meeting Forms)": [
+        "files/PM-DOST-VIII-07-04-F1-Action-Slip-Rev.1.xls",
+        "files/PM-DOST-VIII-09-03-F1-Attendance-Sheet-Rev.1.doc",
+        "files/PM-DOST-VIII-09-03-F2-Minutes-of-Meeting-Rev.1.doc",
+        "files/PM-DOST-VIII-09-01-F4-CSM-Questionnaire-Version-4.docx",
+        "files/PM-DOST-VIII-09-01-F5-Customer-Satisfaction-Feedback-Action-Plan.doc",
+        "files/PM-DOST-VIII-09-01-F6-Consolidated-CSM-Results.docx"
+    ],
+    "PM-FAS-SPO (Finance and Administrative Services / Supply & Property)": [
+        "files/PM-FAS-SPO-07-01-F1-Purchase-Request-Rev.0.xls",
+        "files/PM-FAS-SPO-07-01-F4-Purchase-Order-Rev.-0.xlsx",
+        "files/PM-DOST VIII-10-01-F1 Nonconformity and Corrective Action Report Rev. 2.docx"
+    ],
+    "GIA": [
+        "files/GIA_Proposal_Template.xlsx",
+        {
+            "name": "PM-DOST_VIII-10-01-F1_Nonconformity_and_Corrective_Action_Report_Rev._2.docx",
+            "url": "/api/download/GIA/PM-DOST_VIII-10-01-F1_Nonconformity_and_Corrective_Action_Report_Rev._2.docx",
+            "storage": "supabase",
+            "path": "GIA/PM-DOST_VIII-10-01-F1_Nonconformity_and_Corrective_Action_Report_Rev._2.docx"
+        }
+    ]
+}

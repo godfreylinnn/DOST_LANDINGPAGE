@@ -1,0 +1,19 @@
+{
+  "office": "DOST-PSTO Eastern Samar",
+  "fullName": "Department of Science and Technology - Provincial Science and Technology Office Eastern Samar",
+  "tagline": "Science, technology, and innovation services for Eastern Samar.",
+  "location": "ESSU Compound, Brgy. Maypangdan, Borongan City, Eastern Samar",
+  "telephone": "09171690644",
+  "email": "dostesamar@gmail.com",
+  "facebook": "https://www.facebook.com/dostpstceasternsamar",
+  "assets": {
+    "logo": "assets/dost-logo-photo.jpg",
+    "logoAlt": "DOST logo",
+    "background": "assets/DOST_background.jpg"
+  },
+  "quickInfo": {
+    "label": "Office Hours",
+    "title": "Monday to Thursday",
+    "detail": "7:00 AM - 6:00 PM"
+  }
+}

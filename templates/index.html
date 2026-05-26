@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DOST - PSTO Eastern Samar</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+  </head>
+  <body>
+    <header class="site-topbar">
+      <button id="sidebar-toggle" class="sidebar-toggle" type="button" aria-label="Open menu" aria-controls="site-sidebar" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <a class="top-brand" href="/">
+        <img id="top-brand-logo" class="top-brand-logo" src="{{ url_for('static', filename='assets/dost-logo-photo.jpg') }}" alt="DOST logo">
+        <span>Department of Science and Technology</span>
+      </a>
+      <div class="topbar-tools">
+        <div class="pst-clock" aria-live="polite">
+          <span>Philippine Standard Time</span>
+          <strong id="pst-date">Loading date</strong>
+          <time id="pst-time" datetime="">Loading time</time>
+        </div>
+        <form id="system-search-form" class="system-search nav-search" role="search" aria-label="Site search">
+          <input id="main-website-search" name="q" type="search" placeholder="Search" aria-label="Search the site">
+          <button class="system-search-button" type="submit" aria-label="Search the site">
+            <span aria-hidden="true"></span>
+          </button>
+        </form>
+      </div>
+    </header>
+
+    <aside id="site-sidebar" class="site-sidebar" aria-label="DOST page navigation">
+      <nav class="side-nav" aria-label="Primary navigation">
+        <a href="#about">About Us</a>
+        <a href="#forms">Forms</a>
+        <a href="#systems">Systems</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </aside>
+    <div id="sidebar-overlay" class="sidebar-overlay" hidden></div>
+
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Republic of the Philippines</p>
+          <h1 id="office-name">DOST PSTO Eastern Samar</h1>
+          <p id="tagline" class="lead">Science, technology, and innovation services for Eastern Samar.</p>
+          <div class="hero-actions">
+            <a class="primary-action" href="#systems">Open systems</a>
+            <a id="facebook-link" class="secondary-action" href="https://www.facebook.com/dostpstceasternsamar" target="_blank" rel="noreferrer">Visit Facebook</a>
+          </div>
+        </div>
+        <div class="quick-panel" aria-label="Office quick information">
+          <span id="quick-label">Office Hours</span>
+          <strong id="quick-title">Monday to Friday</strong>
+          <p id="quick-detail">7:00 AM - 6:00 PM</p>
+        </div>
+      </section>
+
+      <section class="info-band" aria-label="Main office services">
+        <article>
+          <span>Technology Services</span>
+          <strong>Support for local enterprises, communities, and institutions.</strong>
+        </article>
+        <article>
+          <span>Scholarships</span>
+          <strong>Information and assistance for S&T education programs.</strong>
+        </article>
+        <article>
+          <span>Innovation</span>
+          <strong>Provincial programs for science, technology, and innovation.</strong>
+        </article>
+      </section>
+
+      <section id="updates" class="content-section split-section">
+        <div id="about" class="section-copy about-panel">
+          <p class="eyebrow">About Us</p>
+          <h2>Serving Eastern Samar through science, technology, and innovation</h2>
+          <p>
+            DOST PSTO Eastern Samar brings national science and technology programs closer to local communities, schools,
+            enterprises, and public institutions across the province.
+          </p>
+          <p>
+            The office supports technology adoption, scholarship information, community-based projects, and innovation
+            services that help Eastern Samar build practical solutions for local needs.
+          </p>
+          <div class="about-button-grid" aria-label="About Us links">
+            <button type="button" onclick="openAboutModal('history')">Historical Background</button>
+            <button type="button" onclick="openAboutModal('privacy')">DOST VIII's Privacy Policy</button>
+            <button type="button" onclick="openAboutModal('officials')">Key Officials</button>
+            <button type="button" onclick="openAboutModal('offices')">Offices</button>
+            <button type="button" onclick="openAboutModal('quality')">Quality Policy</button>
+            <button type="button" onclick="openAboutModal('mandate')">Mandate</button>
+            <button type="button" onclick="openAboutModal('vision')">Vision</button>
+            <button type="button" onclick="openAboutModal('mission')">Mission</button>
+            <button type="button" onclick="openAboutModal('core')">Core Values</button>
+          </div>
+        </div>
+        <div class="facebook-updates" aria-label="Official Facebook page">
+          <a id="facebook-panel-link" class="facebook-panel-link" href="https://www.facebook.com/dostpstceasternsamar" target="_blank" rel="noreferrer">Visit Facebook Page</a>
+          <p class="facebook-panel-note">Official DOST PSTO Eastern Samar page</p>
+          <iframe
+            id="facebook-frame"
+            title="DOST PSTO Eastern Samar Facebook page"
+            src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fdostpstceasternsamar&tabs=timeline&width=340&height=600&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=false"
+            loading="lazy"
+            allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
+          </iframe>
+        </div>
+      </section>
+
+      <div id="about-modal-overlay" class="dash-modal" style="display: none;">
+        <div class="dash-content about-modal-content">
+          <div class="dash-header">
+            <h3 id="about-modal-title">About Us</h3>
+            <button class="close-dash" type="button" onclick="closeAboutModal()" aria-label="Close About Us details">&times;</button>
+          </div>
+          <div id="about-modal-body" class="dash-body about-modal-body"></div>
+        </div>
+      </div>
+
+      <section id="forms" class="content-section forms-section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Downloads</p>
+            <h2>Downloadable Forms</h2>
+            <p class="section-intro" style="font-family: Arial, sans-serif; font-size: 0.95rem; color: #4b5563; 
+            line-height: 1.6; margin-bottom: 25px; text-align: justify;">
+                Access and download official application documents, template sheets, and project proposal guidelines for DOST 
+                VIII’s main regional assistance programs.
+            </p>
+          </div>
+        </div>
+<div class="forms-grid" aria-label="Downloadable forms">
+  <article class="form-slot clickable-slot" onclick="openDash('PM-DOST-VIII (Quality Management / CSM / Meeting Forms)')">
+    <span>PM-DOST-VIII (Quality Management / CSM / Meeting Forms)</span>
+    <br>
+    <p>Click to view forms.</p>
+  </article>
+
+  <article class="form-slot clickable-slot" onclick="openDash('PM-FAS-SPO (Finance and Administrative Services / Supply & Property)')">
+    <span>PM-FAS-SPO (Finance and Administrative Services / Supply & Property)</span>
+    <br>
+    <p>Click to view forms.</p>
+  </article>
+
+  <article class="form-slot clickable-slot" onclick="openDash('GIA')">
+    <span>GIA Forms</span>
+    <strong>Click to view forms.</strong>
+  </article>
+</div>
+
+<div id="form-dash-overlay" class="dash-modal" style="display: none;">
+  <div class="dash-content">
+    
+    <div class="dash-header">
+      <h3 id="dash-title">Forms</h3>
+      <button class="close-dash" onclick="closeDash()">&times;</button>
+    </div>
+
+    <div class="upload-section" style="padding: 15px; border-bottom: 1px solid #ccc;">
+      <form id="uploadForm" enctype="multipart/form-data">
+        <input type="hidden" name="category" id="categoryField">
+        <label>Upload a new form:</label>
+        <input type="file" name="file" id="fileInput">
+        <button type="button" onclick="uploadFile()">Upload</button>
+      </form>
+    </div>
+
+    <div id="dash-list" class="dash-body">
+      </div>
+    
+  </div>
+</div>
+      </section>
+
+      <section id="systems" class="content-section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Company Systems</p>
+            <h2>Online Services and Internal Tools</h2>
+            <p class="section-intro" style="font-family: Arial, sans-serif; font-size: 0.95rem; color: #4b5563; 
+            line-height: 1.6; margin-bottom: 25px; text-align: justify;">
+              Explore DOST VIII's core programs and digital platforms designed to drive community development, 
+              empower small enterprises, and fund innovative scientific initiatives across Eastern Visayas.
+            </p>
+          </div>
+        </div>
+        
+        <div id="systems-grid" class="systems-grid" aria-live="polite"></div>
+      </section>
+
+      <section id="contact" class="contact-band">
+        <div>
+          <p class="eyebrow">Contact</p>
+          <h2 id="office-full-name">Department of Science and Technology - Provincial Science and Technology Office Eastern Samar</h2>
+        </div>
+        <dl>
+          <div>
+            <dt>Location</dt>
+            <dd id="office-location">ESSU Compound, Brgy. Maypangdan, Borongan City, Eastern Samar</dd>
+          </div>
+          <div>
+            <dt>Cellphone No.</dt>
+            <dd id="office-telephone">09171690644</dd>
+          </div>
+          <div>
+            <dt>Email</dt>
+            <dd><a id="office-email" href="mailto:dostesamar@gmail.com">dostesamar@gmail.com</a></dd>
+          </div>
+        </dl>
+      </section>
+
+      <footer class="gov-footer">
+  <div class="gov-footer-container">
+<div class="gov-footer-col">
+  <h3>Republic of the Philippines</h3>
+  <div class="gov-footer-col">
+  <div class="gov-seal-brand">
+    <img src="/static/assets/republic-seal.webp" alt="Seal of the Republic of the Philippines" class="gov-seal">
+    <p>All content is in the public domain unless otherwise stated.</p>
+  </div>
+</div>
+ 
+</div>
+
+    <div class="gov-footer-col">
+      <h3>About GOVPH</h3>
+      <p>Learn more about the Philippine government, its structure, how government works and the people behind it.</p>
+      <ul>
+        <li><a href="https://www.gov.ph/" target="_blank" rel="noreferrer">GOV.PH</a></li>
+        <li><a href="https://data.gov.ph/" target="_blank" rel="noreferrer">Open Data Portal</a></li>
+        <li><a href="https://www.officialgazette.gov.ph/" target="_blank" rel="noreferrer">Official Gazette</a></li>
+      </ul>
+    </div>
+
+<div class="gov-footer-col">
+      <h3>GOVERNMENT LINKS</h3>
+      <ul>
+        <li><a href="https://op-proper.gov.ph/" target="_blank" rel="noreferrer">Office of the President</a></li>
+        <li><a href="https://ovp.gov.ph/" target="_blank" rel="noreferrer">Office of the Vice President</a></li>
+        <li><a href="https://legacy.senate.gov.ph/" target="_blank" rel="noreferrer">Senate of the Philippines</a></li>
+        <li><a href="https://www.house.gov.ph/" target="_blank" rel="noreferrer">House of Representatives</a></li>
+        <li><a href="https://sc.judiciary.gov.ph/" target="_blank" rel="noreferrer">Supreme Court</a></li>
+        <li><a href="https://ca.judiciary.gov.ph/" target="_blank" rel="noreferrer">Court of Appeals</a></li>
+        <li><a href="https://sb.judiciary.gov.ph/" target="_blank" rel="noreferrer">Sandiganbayan</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+    </main>
+  </body>
+</html>

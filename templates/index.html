@@ -16,7 +16,10 @@
       </button>
       <a class="top-brand" href="/">
         <img id="top-brand-logo" class="top-brand-logo" src="{{ url_for('static', filename='assets/dost-logo-photo.jpg') }}" alt="DOST logo">
-        <span>Department of Science and Technology</span>
+        <span class="top-brand-text">
+          <strong>DOST-PSTO</strong>
+          <small>Eastern Samar</small>
+        </span>
       </a>
       <div class="topbar-tools">
         <div class="pst-clock" aria-live="polite">
@@ -50,14 +53,25 @@
           <h1 id="office-name">DOST PSTO Eastern Samar</h1>
           <p id="tagline" class="lead">Science, technology, and innovation services for Eastern Samar.</p>
           <div class="hero-actions">
-            <a class="primary-action" href="#systems">Open systems</a>
-            <a id="facebook-link" class="secondary-action" href="https://www.facebook.com/dostpstceasternsamar" target="_blank" rel="noreferrer">Visit Facebook</a>
+            <a class="primary-action" href="#systems">Open Systems <span class="action-icon action-icon-arrow" aria-hidden="true"></span></a>
+            <a id="facebook-link" class="secondary-action" href="https://www.facebook.com/dostpstceasternsamar" target="_blank" rel="noreferrer"><span class="action-icon action-icon-external" aria-hidden="true"></span> Visit Facebook</a>
           </div>
         </div>
         <div class="quick-panel" aria-label="Office quick information">
-          <span id="quick-label">Office Hours</span>
-          <strong id="quick-title">Monday to Friday</strong>
-          <p id="quick-detail">7:00 AM - 6:00 PM</p>
+          <div class="quick-panel-heading">
+            <span class="quick-panel-icon" aria-hidden="true"></span>
+            <strong id="quick-label">Office Hours</strong>
+          </div>
+          <div class="office-hours-list">
+            <p>
+              <span id="quick-title">Monday - Thursday</span>
+              <strong id="quick-detail">7:00 AM - 6:00 PM</strong>
+            </p>
+          </div>
+          <address id="quick-location">
+            <span class="quick-location-icon" aria-hidden="true"></span>
+            ESSU Compound, Brgy. Maypangdan, Borongan City, Eastern Samar
+          </address>
         </div>
       </section>
 
@@ -139,19 +153,19 @@
         </div>
 <div class="forms-grid" aria-label="Downloadable forms">
   <article class="form-slot clickable-slot" onclick="openDash('PM-DOST-VIII (Quality Management / CSM / Meeting Forms)')">
-    <span>PM-DOST-VIII (Quality Management / CSM / Meeting Forms)</span>
+    <span>Quality & Management (PM-DOST)</span>
     <br>
     <p>Click to view forms.</p>
   </article>
 
   <article class="form-slot clickable-slot" onclick="openDash('PM-FAS-SPO (Finance and Administrative Services / Supply & Property)')">
-    <span>PM-FAS-SPO (Finance and Administrative Services / Supply & Property)</span>
+    <span>Finance & Administrative (PM-FAS)</span>
     <br>
     <p>Click to view forms.</p>
   </article>
 
   <article class="form-slot clickable-slot" onclick="openDash('GIA')">
-    <span>GIA Forms</span>
+    <span>Assistance & Technical Programs (PM-TO)</span>
     <strong>Click to view forms.</strong>
   </article>
 </div>
@@ -164,14 +178,25 @@
       <button class="close-dash" onclick="closeDash()">&times;</button>
     </div>
 
-    <div class="upload-section" style="padding: 15px; border-bottom: 1px solid #ccc;">
-      <form id="uploadForm" enctype="multipart/form-data">
-        <input type="hidden" name="category" id="categoryField">
-        <label>Upload a new form:</label>
-        <input type="file" name="file" id="fileInput">
-        <button type="button" onclick="uploadFile()">Upload</button>
-      </form>
+  <div class="upload-section">
+  <form id="uploadForm" enctype="multipart/form-data">
+    <input type="hidden" name="category" id="categoryField">
+    
+    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">Upload a new form:</label>
+    
+    <div class="file-upload-wrapper" style="display: flex; align-items: center; gap: 10px;">
+      <input type="file" name="file" id="fileInput" class="file-input" style="display: none;" onchange="updateLabel(this)">
+      <label for="fileInput" class="custom-file-upload">
+        📁 Choose File
+      </label>
+      <span id="file-chosen" style="font-size: 0.85rem; color: #6b7280;">No file chosen</span>
     </div>
+
+    <button type="button" class="upload-btn" onclick="uploadFile()">
+      Upload Document
+    </button>
+  </form>
+</div>
 
     <div id="dash-list" class="dash-body">
       </div>

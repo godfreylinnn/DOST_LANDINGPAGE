@@ -885,3 +885,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .catch(error => console.error('Error loading systems:', error));
 });
+function updateLabel(input) {
+  const fileChosen = document.getElementById('file-chosen');
+  fileChosen.textContent = input.files[0] ? input.files[0].name : "No file chosen";
+}

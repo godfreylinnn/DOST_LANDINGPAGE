@@ -20,13 +20,5 @@
             "storage": "supabase",
             "path": "GIA/PM-DOST_VIII-10-01-F1_Nonconformity_and_Corrective_Action_Report_Rev._2.docx"
         }
-    ],
-    "GIA": [
-        {
-            "name": "TRANSMITTALS.docx",
-            "url": "/api/download/GIA/TRANSMITTALS.docx",
-            "storage": "supabase",
-            "path": "GIA/TRANSMITTALS.docx"
-        }
     ]
 }

@@ -811,35 +811,65 @@ h2 {
   padding-top: 56px;
 }
 
+/* Container for the cards */
+/* Container for the cards */
 .forms-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px;
+    display: flex;
+    gap: 26px; /* Space between cards */
+    padding: 20px 0;
+    flex-wrap: wrap; /* Ensures responsiveness */
 }
 
+/* Card Styling */
 .form-slot {
-  min-height: 136px;
-  padding: 22px;
-  background: var(--white);
-  border: 1px dashed #9ec4df;
-  border-radius: 8px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb; /* Light grey border */
+    border-radius: 12px;
+    padding: 24px;
+    width: 360px; /* Adjust based on your layout needs */
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
+/* Apply specific accent colors on the left border */
+.form-slot:nth-child(1) { border-left: 6px solid #3b82f6; } /* Blue */
+.form-slot:nth-child(2) { border-left: 6px solid #10b981; } /* Green */
+.form-slot:nth-child(3) { border-left: 6px solid #f59e0b; } /* Yellow */
+
+/* Hover effect */
+
+
+/* Card header (The "12 forms" text) */
+.card-header {
+    font-size: 0.75rem;
+    color: #6b7280;
+    font-weight: 600;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+/* Title and Link styling */
 .form-slot span {
-  display: block;
-  color: var(--green);
-  font-size: 0.82rem;
-  font-weight: 800;
-  text-transform: uppercase;
+    font-weight: 700;
+    color: #111827;
+    font-size: 1rem;
+    display: block;
+    margin-bottom: 12px;
 }
 
-.form-slot strong {
-  display: block;
-  margin-top: 10px;
-  color: var(--blue-900);
-  font-size: 1.08rem;
+.view-link {
+    color: #3b82f6;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
-
+.view-link:hover{
+  color: #003366;
+}
 .empty-state {
   grid-column: 1 / -1;
   padding: 24px;

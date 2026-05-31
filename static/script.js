@@ -406,7 +406,7 @@ function openDash(type) {
         'files/PM-FAS-SPO-07-01-F1-Purchase-Request-Rev.0.xls',
         'files/PM-FAS-SPO-07-01-F4-Purchase-Order-Rev.-0.xlsx',
     ],
-    'GIA': ['files/GIA_Proposal_Template.xlsx']
+    'Assistance & Technical Programs (PM-TO)': ['files/GIA_Proposal_Template.xlsx']
   };
 
   // 2. Fetch new files from your server and combine them

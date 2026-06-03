@@ -8,6 +8,123 @@ const sideNavLinks = document.querySelectorAll(".side-nav a");
 const pstDate = document.querySelector("#pst-date");
 const pstTime = document.querySelector("#pst-time");
 let systems = [];
+let latestFormFiles = {};
+
+const formCategories = [
+  {
+    id: 'pm-dost',
+    dashTitle: 'PM-DOST-VIII (Quality Management / CSM / Meeting Forms)',
+    code: 'PM-DOST-VIII',
+    title: 'Quality Management / CSM / Meeting Forms',
+    keys: [
+      'PM-DOST-VIII (Quality Management / CSM / Meeting Forms)',
+      'Quality & Management (PM-DOST)'
+    ],
+    files: [],
+  },
+  {
+    id: 'pm-fas',
+    dashTitle: 'PM-FAS-SPO (Finance and Administrative Services / Supply & Property)',
+    code: 'PM-FAS-SPO',
+    title: 'Finance and Administrative Services / Supply & Property',
+    keys: [
+      'PM-FAS-SPO (Finance and Administrative Services / Supply & Property)',
+      'Finance & Administrative (PM-FAS)'
+    ],
+    files: [],
+  },
+  {
+    id: 'gia',
+    dashTitle: 'GIA',
+    code: 'GIA',
+    title: 'GIA Forms',
+    keys: [
+      'GIA',
+      'Assistance & Technical Programs (PM-TO)'
+    ],
+    files: [],
+  },
+];
+
+function getFormCategory(type) {
+  return formCategories.find(category =>
+    category.dashTitle === type || category.keys.includes(type) || category.id === type
+  );
+}
+
+function uniqueFiles(files) {
+  const seen = new Set();
+  return files.filter(file => {
+    const key = fileRefKey(file);
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function filesForCategory(category, serverFiles = latestFormFiles) {
+  if (!category) return [];
+  const files = [...category.files];
+  category.keys.forEach(key => {
+    (serverFiles[key] || []).forEach(file => files.push(file));
+  });
+  return uniqueFiles(files);
+}
+
+function formatFormCount(count) {
+  return `${count} ${count === 1 ? 'form' : 'forms'}`;
+}
+
+function formIconMarkup() {
+  return `
+    <div class="form-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" focusable="false">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+        <path d="M14 2v6h6"></path>
+        <path d="M8 13h8"></path>
+        <path d="M8 17h8"></path>
+        <path d="M8 9h2"></path>
+      </svg>
+    </div>`;
+}
+
+function renderFormCards() {
+  document.querySelectorAll('.forms-grid .form-slot').forEach((card, index) => {
+    const category = formCategories[index];
+    if (!category) return;
+
+    card.dataset.formCard = category.id;
+    card.innerHTML = `
+      ${formIconMarkup()}
+      <div class="card-header"><span data-form-count="${category.id}">0 forms</span></div>
+      <p class="form-code">${escapeHtml(category.code)}</p>
+      <h3>${escapeHtml(category.title)}</h3>
+      <div class="view-link"><span class="download-icon" aria-hidden="true"></span>View forms</div>
+    `;
+  });
+}
+
+function updateFormCountBadges(serverFiles = latestFormFiles) {
+  formCategories.forEach(category => {
+    document.querySelectorAll(`[data-form-count="${category.id}"]`).forEach(badge => {
+      badge.textContent = formatFormCount(filesForCategory(category, serverFiles).length);
+    });
+  });
+}
+
+function loadFormCounts() {
+  return fetch('/api/files')
+    .then(res => res.ok ? res.json() : Promise.reject(new Error('Could not load forms')))
+    .then(serverFiles => {
+      latestFormFiles = serverFiles || {};
+      updateFormCountBadges(latestFormFiles);
+      return latestFormFiles;
+    })
+    .catch(() => {
+      updateFormCountBadges(latestFormFiles);
+      return latestFormFiles;
+    });
+}
 
 function setSidebarOpen(isOpen) {
   document.body.classList.toggle("sidebar-open", isOpen);
@@ -386,55 +503,24 @@ function openDash(type) {
   const title = document.getElementById('dash-title');
   const list = document.getElementById('dash-list');
   const categoryField = document.getElementById('categoryField');
+  const category = getFormCategory(type);
+  const dashType = category?.dashTitle || type;
   
-  if (categoryField) categoryField.value = type;
+  if (categoryField) categoryField.value = dashType;
   if (!overlay || !list) return;
 
-  title.innerText = `${type} `;
-  
-  // 1. Your existing hardcoded files
-  const hardcodedFiles = {
-    'PM-DOST-VIII (Quality Management / CSM / Meeting Forms)': [
-        'files/PM-DOST-VIII-07-04-F1-Action-Slip-Rev.1.xls',
-        'files/PM-DOST-VIII-09-03-F1-Attendance-Sheet-Rev.1.doc',
-        'files/PM-DOST-VIII-09-03-F2-Minutes-of-Meeting-Rev.1.doc',
-        'files/PM-DOST-VIII-09-01-F4-CSM-Questionnaire-Version-4.docx',
-        'files/PM-DOST-VIII-09-01-F5-Customer-Satisfaction-Feedback-Action-Plan.doc',
-        'files/PM-DOST-VIII-09-01-F6-Consolidated-CSM-Results.docx',
-    ],
-    'PM-FAS-SPO (Finance and Administrative Services / Supply & Property)': [
-        'files/PM-FAS-SPO-07-01-F1-Purchase-Request-Rev.0.xls',
-        'files/PM-FAS-SPO-07-01-F4-Purchase-Order-Rev.-0.xlsx',
-    ],
-    'Assistance & Technical Programs (PM-TO)': ['files/GIA_Proposal_Template.xlsx']
-  };
+  title.innerText = `${dashType} `;
+  list.innerHTML = '<p>Loading forms...</p>';
 
-  // 2. Fetch new files from your server and combine them
-  fetch('/api/files')
-    .then(res => res.json())
+  loadFormCounts()
     .then(serverFiles => {
-        let combinedFiles = hardcodedFiles[type] || [];
-        
-        // Add new files from server if they exist for this category
-        if (serverFiles[type]) {
-            serverFiles[type].forEach(newFile => {
-                const exists = combinedFiles.some(file => fileRefKey(file) === fileRefKey(newFile));
-                if (!exists) {
-                    combinedFiles.push(newFile);
-                }
-            });
-        }
-
-        // 3. Render the combined list
+        const combinedFiles = filesForCategory(category, serverFiles);
         if (combinedFiles.length > 0) {
-          // Change your rendering logic inside openDash to this:
-// Change your list.innerHTML map function to this:
-list.innerHTML = combinedFiles.map(file => {
-    const cleanPath = fileRefUrl(file);
-    const displayName = fileRefName(file);
-    
-    return `<div class="file-item"><a href="${escapeHtml(cleanPath)}" download>${escapeHtml(displayName)}</a></div>`;
-}).join('');
+          list.innerHTML = combinedFiles.map(file => {
+              const cleanPath = fileRefUrl(file);
+              const displayName = fileRefName(file);
+              return `<div class="file-item"><a href="${escapeHtml(cleanPath)}" download>${escapeHtml(displayName)}</a></div>`;
+          }).join('');
         } else {
             list.innerHTML = '<p>No files available for this category.</p>';
         }
@@ -829,10 +915,12 @@ document.addEventListener('keydown', (event) => {
 });
 
 // Initialize execution loops
+renderFormCards();
 updatePstClock();
 setInterval(updatePstClock, 1000);
 loadProfile();
 loadSystems();
+loadFormCounts();
 
 function uploadFile() {
     const form = document.getElementById('uploadForm');
@@ -848,7 +936,7 @@ function uploadFile() {
             alert('Upload successful!');
             // Re-open the dash to refresh the file list
             const type = document.getElementById('categoryField').value;
-            openDash(type); 
+            loadFormCounts().then(() => openDash(type));
         } else {
             alert('Upload failed: ' + data.error);
         }

@@ -9,6 +9,8 @@ const pstDate = document.querySelector("#pst-date");
 const pstTime = document.querySelector("#pst-time");
 let systems = [];
 let latestFormFiles = {};
+let latestDashFiles = [];
+let activeFormDashType = '';
 
 const formCategories = [
   {
@@ -65,7 +67,7 @@ function uniqueFiles(files) {
 function filesForCategory(category, serverFiles = latestFormFiles) {
   if (!category) return [];
   const files = [...category.files];
-  category.keys.forEach(key => {
+  [category.dashTitle, ...category.keys].forEach(key => {
     (serverFiles[key] || []).forEach(file => files.push(file));
   });
   return uniqueFiles(files);
@@ -123,6 +125,119 @@ function loadFormCounts() {
     .catch(() => {
       updateFormCountBadges(latestFormFiles);
       return latestFormFiles;
+    });
+}
+
+function renderFileItem(file, index) {
+  const cleanPath = fileRefUrl(file);
+  const displayName = fileRefName(file);
+
+  return `
+    <div class="file-item">
+      <a class="file-download-link" href="${escapeHtml(cleanPath)}" download>
+        <span>${escapeHtml(displayName)}</span>
+      </a>
+      <div class="file-actions">
+        <button class="file-menu-button" type="button" data-file-menu-index="${index}" aria-label="File options for ${escapeHtml(displayName)}">&vellip;</button>
+        <div class="file-action-menu" data-file-menu="${index}" hidden>
+          <a href="${escapeHtml(cleanPath)}" download>Download</a>
+          <button type="button" data-delete-file-index="${index}">Delete</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function closeFileMenus() {
+  document.querySelectorAll('.file-action-menu').forEach(menu => {
+    menu.hidden = true;
+  });
+}
+
+function toggleFileMenu(index) {
+  document.querySelectorAll('.file-action-menu').forEach(menu => {
+    menu.hidden = menu.dataset.fileMenu !== String(index) ? true : !menu.hidden;
+  });
+}
+
+function toastContainer() {
+  let container = document.querySelector('#floating-alerts');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'floating-alerts';
+    container.className = 'floating-alerts';
+    document.body.appendChild(container);
+  }
+  return container;
+}
+
+function showToast(message, type = 'info') {
+  const toast = document.createElement('div');
+  toast.className = `floating-toast floating-toast-${type}`;
+  toast.setAttribute('role', 'status');
+  toast.textContent = message;
+  toastContainer().appendChild(toast);
+
+  setTimeout(() => {
+    toast.classList.add('is-leaving');
+    setTimeout(() => toast.remove(), 220);
+  }, 3200);
+}
+
+function showFloatingConfirm(message) {
+  return new Promise(resolve => {
+    const existing = document.querySelector('.floating-confirm');
+    if (existing) existing.remove();
+
+    const panel = document.createElement('div');
+    panel.className = 'floating-confirm';
+    panel.setAttribute('role', 'dialog');
+    panel.setAttribute('aria-modal', 'true');
+    panel.innerHTML = `
+      <p>${escapeHtml(message)}</p>
+      <div class="floating-confirm-actions">
+        <button type="button" class="confirm-cancel">Cancel</button>
+        <button type="button" class="confirm-delete">Delete</button>
+      </div>
+    `;
+
+    const finish = value => {
+      panel.remove();
+      resolve(value);
+    };
+
+    panel.querySelector('.confirm-cancel').addEventListener('click', () => finish(false));
+    panel.querySelector('.confirm-delete').addEventListener('click', () => finish(true));
+    document.body.appendChild(panel);
+    panel.querySelector('.confirm-cancel').focus();
+  });
+}
+
+function deleteFormFile(file) {
+  const displayName = fileRefName(file);
+  const category = activeFormDashType || document.getElementById('categoryField')?.value || '';
+
+  showFloatingConfirm(`Delete "${displayName}" permanently from the system? This cannot be undone.`)
+    .then(confirmed => {
+      if (!confirmed) return null;
+
+      return fetch('/api/files/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ category, file }),
+      })
+        .then(response => response.json().then(data => ({ ok: response.ok, data })))
+        .then(({ ok, data }) => {
+          if (!ok || !data.success) {
+            throw new Error(data.error || 'Delete failed.');
+          }
+          closeFileMenus();
+          showToast('File deleted successfully.', 'success');
+          return loadFormCounts().then(() => openDash(category));
+        });
+    })
+    .catch(error => {
+      showToast(`Delete failed: ${error.message}`, 'error');
     });
 }
 
@@ -505,6 +620,7 @@ function openDash(type) {
   const categoryField = document.getElementById('categoryField');
   const category = getFormCategory(type);
   const dashType = category?.dashTitle || type;
+  activeFormDashType = dashType;
   
   if (categoryField) categoryField.value = dashType;
   if (!overlay || !list) return;
@@ -515,13 +631,11 @@ function openDash(type) {
   loadFormCounts()
     .then(serverFiles => {
         const combinedFiles = filesForCategory(category, serverFiles);
+        latestDashFiles = combinedFiles;
         if (combinedFiles.length > 0) {
-          list.innerHTML = combinedFiles.map(file => {
-              const cleanPath = fileRefUrl(file);
-              const displayName = fileRefName(file);
-              return `<div class="file-item"><a href="${escapeHtml(cleanPath)}" download>${escapeHtml(displayName)}</a></div>`;
-          }).join('');
+          list.innerHTML = combinedFiles.map(renderFileItem).join('');
         } else {
+            latestDashFiles = [];
             list.innerHTML = '<p>No files available for this category.</p>';
         }
     });
@@ -531,6 +645,30 @@ function openDash(type) {
 function closeDash() {
   document.getElementById('form-dash-overlay').style.display = 'none';
 }
+
+document.getElementById('dash-list')?.addEventListener('click', (event) => {
+  const menuButton = event.target.closest('[data-file-menu-index]');
+  if (menuButton) {
+    event.preventDefault();
+    event.stopPropagation();
+    toggleFileMenu(menuButton.dataset.fileMenuIndex);
+    return;
+  }
+
+  const deleteButton = event.target.closest('[data-delete-file-index]');
+  if (deleteButton) {
+    event.preventDefault();
+    event.stopPropagation();
+    const file = latestDashFiles[Number(deleteButton.dataset.deleteFileIndex)];
+    if (file) deleteFormFile(file);
+  }
+});
+
+document.addEventListener('click', (event) => {
+  if (!event.target.closest('.file-actions')) {
+    closeFileMenus();
+  }
+});
 
 const aboutModalContent = {
   history: {
@@ -933,12 +1071,12 @@ function uploadFile() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            alert('Upload successful!');
+            showToast('Upload successful.', 'success');
             // Re-open the dash to refresh the file list
             const type = document.getElementById('categoryField').value;
             loadFormCounts().then(() => openDash(type));
         } else {
-            alert('Upload failed: ' + data.error);
+            showToast('Upload failed: ' + data.error, 'error');
         }
     });
 }

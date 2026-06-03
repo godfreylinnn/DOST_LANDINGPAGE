@@ -27,6 +27,26 @@ FORM_CATEGORIES = [
     "PM-FAS-SPO (Finance and Administrative Services / Supply & Property)",
     "GIA",
 ]
+FORM_CATEGORY_ALIASES = {
+    "PM-DOST-VIII (Quality Management / CSM / Meeting Forms)": [
+        "PM-DOST-VIII (Quality Management / CSM / Meeting Forms)",
+        "Quality & Management (PM-DOST)",
+    ],
+    "PM-FAS-SPO (Finance and Administrative Services / Supply & Property)": [
+        "PM-FAS-SPO (Finance and Administrative Services / Supply & Property)",
+        "Finance & Administrative (PM-FAS)",
+    ],
+    "PM-TO (Assistance & Technical Programs)": [
+        "PM-TO (Assistance & Technical Programs)",
+        "GIA",
+        "Assistance & Technical Programs (PM-TO)",
+    ],
+    "GIA": [
+        "PM-TO (Assistance & Technical Programs)",
+        "GIA",
+        "Assistance & Technical Programs (PM-TO)",
+    ],
+}
 
 # Ensure directories exist
 FILES_DIR.mkdir(parents=True, exist_ok=True)
@@ -75,6 +95,63 @@ def supabase_download_ref(storage_path, display_name):
         "storage": "supabase",
         "path": storage_path,
     }
+
+
+def file_ref_key(ref):
+    if isinstance(ref, str):
+        return ref
+    if isinstance(ref, dict):
+        return ref.get("url") or ref.get("path") or ref.get("name") or ""
+    return ""
+
+
+def matching_file_ref(left, right):
+    left_keys = {file_ref_key(left)}
+    right_keys = {file_ref_key(right)}
+
+    if isinstance(left, dict):
+        left_keys.update(filter(None, [left.get("url"), left.get("path"), left.get("name")]))
+    if isinstance(right, dict):
+        right_keys.update(filter(None, [right.get("url"), right.get("path"), right.get("name")]))
+
+    return bool(left_keys - {""} & right_keys - {""})
+
+
+def category_keys_for(category):
+    return FORM_CATEGORY_ALIASES.get(category, [category])
+
+
+def delete_local_file(ref):
+    path_value = ref if isinstance(ref, str) else ref.get("path") or ref.get("url") or ""
+    if path_value.startswith("/static/assets/"):
+        path_value = path_value.removeprefix("/static/assets/")
+    if path_value.startswith("static/assets/"):
+        path_value = path_value.removeprefix("static/assets/")
+    if not path_value.startswith("files/"):
+        return False
+
+    target = (BASE_DIR / "static" / "assets" / path_value).resolve()
+    if not target.is_relative_to(FILES_DIR.resolve()) or not target.exists():
+        return False
+
+    target.unlink()
+    return True
+
+
+def delete_supabase_file(ref):
+    if not isinstance(ref, dict):
+        return False
+
+    storage_path = ref.get("path")
+    if not storage_path:
+        return False
+
+    supabase = get_supabase_client(use_service_role=True)
+    if supabase is None:
+        raise RuntimeError("Supabase deletion needs SUPABASE_SERVICE_ROLE_KEY in .env.")
+
+    supabase.storage.from_(SUPABASE_BUCKET).remove([storage_path])
+    return True
 
 
 def list_supabase_files_by_category(category):
@@ -169,6 +246,60 @@ def upload_file():
 
     save_file_reference(category, ref)
     return jsonify({"success": True, "url": ref})
+
+
+@app.route('/api/files/delete', methods=['POST'])
+def delete_file():
+    payload = request.get_json(silent=True) or {}
+    category = payload.get("category", "")
+    target_ref = payload.get("file")
+
+    if not category or target_ref is None:
+        return jsonify({"error": "Missing category or file."}), 400
+
+    json_path = DATA_DIR / "files.json"
+    data = json.loads(json_path.read_text(encoding="utf-8")) if json_path.exists() else {}
+    refs_to_delete = [target_ref]
+    removed_reference = False
+    next_data = data.copy()
+
+    for key in category_keys_for(category):
+        existing_refs = data.get(key, [])
+        kept_refs = []
+        for ref in existing_refs:
+            if matching_file_ref(ref, target_ref):
+                refs_to_delete.append(ref)
+                removed_reference = True
+            else:
+                kept_refs.append(ref)
+        if existing_refs or key in data:
+            next_data[key] = kept_refs
+
+    deleted_storage = False
+    delete_errors = []
+    seen_refs = set()
+    for ref in refs_to_delete:
+        key = json.dumps(ref, sort_keys=True) if isinstance(ref, dict) else str(ref)
+        if key in seen_refs:
+            continue
+        seen_refs.add(key)
+
+        try:
+            deleted_storage = delete_supabase_file(ref) or deleted_storage
+        except Exception as exc:
+            delete_errors.append(str(exc))
+
+        try:
+            deleted_storage = delete_local_file(ref) or deleted_storage
+        except Exception as exc:
+            delete_errors.append(str(exc))
+
+    if delete_errors:
+        return jsonify({"error": "Could not delete the selected file.", "details": delete_errors}), 500
+
+    json_path.write_text(json.dumps(next_data, indent=4), encoding="utf-8")
+
+    return jsonify({"success": True, "deleted_storage": deleted_storage, "removed_reference": removed_reference})
 
 
 @app.route('/api/download/<path:storage_path>', methods=['GET'])

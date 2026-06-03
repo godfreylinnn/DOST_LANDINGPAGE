@@ -35,9 +35,9 @@ const formCategories = [
   },
   {
     id: 'gia',
-    dashTitle: 'GIA',
-    code: 'GIA',
-    title: 'GIA Forms',
+    dashTitle: 'PM-TO (Assistance & Technical Programs)',
+    code: 'PM-TO',
+    title: 'Assistance & Technical Programs (PM-TO)',
     keys: [
       'GIA',
       'Assistance & Technical Programs (PM-TO)'

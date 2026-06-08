@@ -545,7 +545,7 @@ h2 {
 }
 
 .content-section {
-  padding: 32px clamp(18px, 5vw, 72px) 24px;
+  padding: 32px clamp(18px, 5vw, 50px) 24px;
 }
 
 .split-section {
@@ -810,7 +810,7 @@ h2 {
 }
 
 .forms-section {
-  padding-top: 56px;
+  padding-top: 5px;
 }
 
 /* Container for the cards */

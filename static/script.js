@@ -161,11 +161,12 @@ function toggleFileMenu(index) {
 }
 
 function toastContainer() {
-  let container = document.querySelector('#floating-alerts');
+  let container = document.getElementById('floating-alerts');
   if (!container) {
     container = document.createElement('div');
     container.id = 'floating-alerts';
-    container.className = 'floating-alerts';
+    // Use the class for styling, ID for selection
+    container.className = 'floating-alerts'; 
     document.body.appendChild(container);
   }
   return container;
@@ -213,10 +214,12 @@ function showFloatingConfirm(message) {
   });
 }
 
+// 1. The main function that handles the logic
 function deleteFormFile(file) {
   const displayName = fileRefName(file);
   const category = activeFormDashType || document.getElementById('categoryField')?.value || '';
 
+  // Call the UI function here
   showFloatingConfirm(`Delete "${displayName}" permanently from the system? This cannot be undone.`)
     .then(confirmed => {
       if (!confirmed) return null;
@@ -226,18 +229,50 @@ function deleteFormFile(file) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ category, file }),
       })
-        .then(response => response.json().then(data => ({ ok: response.ok, data })))
-        .then(({ ok, data }) => {
-          if (!ok || !data.success) {
-            throw new Error(data.error || 'Delete failed.');
-          }
-          closeFileMenus();
-          showToast('File deleted successfully.', 'success');
-          return loadFormCounts().then(() => openDash(category));
-        });
+      .then(response => response.json().then(data => ({ ok: response.ok, data })))
+      .then(({ ok, data }) => {
+        if (!ok || !data.success) {
+          throw new Error(data.error || 'Delete failed.');
+        }
+        closeFileMenus();
+        showToast('File deleted successfully.', 'delete');
+        return loadFormCounts().then(() => openDash(category));
+      });
     })
     .catch(error => {
       showToast(`Delete failed: ${error.message}`, 'error');
+    });
+}
+
+// 2. The UI function (Defined separately)
+function showFloatingConfirm(message) {
+    return new Promise((resolve) => {
+        const box = document.createElement('div');
+        box.id = 'delete-alert-modal'; 
+
+        const msg = document.createElement('p');
+        msg.textContent = message;
+        box.appendChild(msg);
+
+        const confirmBtn = document.createElement('button');
+        confirmBtn.textContent = 'Delete';
+        confirmBtn.id = 'confirm-btn';
+        confirmBtn.onclick = () => {
+            document.body.removeChild(box);
+            resolve(true);
+        };
+        box.appendChild(confirmBtn);
+
+        const cancelBtn = document.createElement('button');
+        cancelBtn.textContent = 'Cancel';
+        cancelBtn.id = 'cancel-btn';
+        cancelBtn.onclick = () => {
+            document.body.removeChild(box);
+            resolve(false);
+        };
+        box.appendChild(cancelBtn);
+
+        document.body.appendChild(box);
     });
 }
 
@@ -1070,14 +1105,21 @@ function uploadFile() {
     })
     .then(response => response.json())
     .then(data => {
-        if (data.success) {
-            showToast('Upload successful.', 'success');
-            // Re-open the dash to refresh the file list
-            const type = document.getElementById('categoryField').value;
-            loadFormCounts().then(() => openDash(type));
-        } else {
+if (data.success) {
+    form.reset(); 
+    
+    // ADD THIS LINE: Replace 'fileNameDisplay' with the actual ID of the element showing the text
+    const display = document.getElementById('fileNameDisplay');
+    if (display) display.textContent = ''; 
+    
+    showToast('Upload successful.', 'success');
+    // ... rest of your code
+} else {
             showToast('Upload failed: ' + data.error, 'error');
         }
+    })
+    .catch(error => {
+        showToast('Upload failed: ' + error.message, 'error');
     });
 }
 document.addEventListener('DOMContentLoaded', () => {

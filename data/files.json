@@ -1,7 +1,5 @@
 {
     "Quality & Management (PM-DOST)": [
-        "files/PM-DOST-VIII-07-04-F1-Action-Slip-Rev.1.xls",
-        "files/PM-DOST-VIII-09-03-F1-Attendance-Sheet-Rev.1.doc",
         "files/PM-DOST-VIII-09-03-F2-Minutes-of-Meeting-Rev.1.doc",
         "files/PM-DOST-VIII-09-01-F4-CSM-Questionnaire-Version-4.docx",
         "files/PM-DOST-VIII-09-01-F5-Customer-Satisfaction-Feedback-Action-Plan.doc",
@@ -19,5 +17,6 @@
             "storage": "supabase",
             "path": "GIA/PM-DOST_VIII-10-01-F1_Nonconformity_and_Corrective_Action_Report_Rev._2.docx"
         }
-    ]
+    ],
+    "PM-TO (Assistance & Technical Programs)": []
 }

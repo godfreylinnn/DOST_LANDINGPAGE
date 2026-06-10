@@ -1095,8 +1095,7 @@ loadProfile();
 loadSystems();
 loadFormCounts();
 
-function uploadFile() {
-    const form = document.getElementById('uploadForm');
+function uploadFile(form) {
     const formData = new FormData(form);
 
     fetch('/api/upload', {
@@ -1105,17 +1104,19 @@ function uploadFile() {
     })
     .then(response => response.json())
     .then(data => {
-if (data.success) {
-    form.reset(); 
-    
-    // ADD THIS LINE: Replace 'fileNameDisplay' with the actual ID of the element showing the text
-    const display = document.getElementById('fileNameDisplay');
-    if (display) display.textContent = ''; 
-    
-    showToast('Upload successful.', 'success');
-    // ... rest of your code
-} else {
-            showToast('Upload failed: ' + data.error, 'error');
+        if (data.success) {
+            form.reset();
+            
+            const display = document.getElementById('file-chosen');
+            if (display) display.textContent = 'No file chosen';
+            
+            showToast('Upload successful.', 'success');
+            
+            // Re-fetch database values so sort lists are synced with live entries
+            fetchFiles(); 
+            
+        } else {
+            showToast('Upload failed: ' + (data.error || 'Unknown error'), 'error');
         }
     })
     .catch(error => {
@@ -1154,6 +1155,39 @@ document.addEventListener('DOMContentLoaded', () => {
         .catch(error => console.error('Error loading systems:', error));
 });
 function updateLabel(input) {
-  const fileChosen = document.getElementById('file-chosen');
-  fileChosen.textContent = input.files[0] ? input.files[0].name : "No file chosen";
+    const display = document.getElementById('file-chosen');
+    if (input.files.length > 1) {
+        display.textContent = `${input.files.length} files selected`;
+    } else if (input.files.length === 1) {
+        display.textContent = input.files[0].name;
+    } else {
+        display.textContent = 'No file chosen';
+    }
+}
+
+
+function filterFiles() {
+    const searchTerm = document.getElementById('documentSearch').value.toLowerCase();
+    
+    // 1. Target the correct ID from your DOM tree: 'dash-list'
+    const listContainer = document.getElementById('dash-list'); 
+    if (!listContainer) {
+        console.error("Could not find 'dash-list' container!");
+        return;
+    }
+
+    // 2. Your file cards are inside 'dash-list'. 
+    // They appear to be divs or rows inside this container.
+    const items = listContainer.children;
+
+    // 3. Loop through and hide/show
+    Array.from(items).forEach(item => {
+        const text = item.innerText.toLowerCase();
+        
+        if (text.includes(searchTerm)) {
+            item.style.display = ""; // Reset to CSS default
+        } else {
+            item.style.display = "none"; // Hide
+        }
+    });
 }

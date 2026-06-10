@@ -183,17 +183,22 @@
     
     <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">Upload a new form:</label>
     
-    <div class="file-upload-wrapper" style="display: flex; align-items: center; gap: 10px;">
-      <input type="file" name="file" id="fileInput" class="file-input" style="display: none;" onchange="updateLabel(this)">
-      <label for="fileInput" class="custom-file-upload">
-        📁 Choose File
-      </label>
+    <div class="file-upload-wrapper" style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+      <input type="file" name="files[]" id="fileInput" class="file-input" style="display: none;" onchange="updateLabel(this)" multiple>
+      <label for="fileInput" class="custom-file-upload">📁 Choose File</label>
       <span id="file-chosen" style="font-size: 0.85rem; color: #6b7280;">No file chosen</span>
     </div>
 
-    <button type="button" class="upload-btn" onclick="uploadFile()">
-      Upload Document
-    </button>
+    <div class="upload-controls" style="display: flex; gap: 10px; align-items: center;">
+      <button type="button" class="upload-btn" onclick="uploadFile()">Upload Document</button>
+      
+<input type="text" id="documentSearch" 
+       placeholder="Search documents..." 
+       onkeyup="filterFiles()" 
+       onkeydown="if(event.key==='Enter'){event.preventDefault();}">
+
+    </div>
+    
   </form>
 </div>
 

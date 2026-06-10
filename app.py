@@ -197,55 +197,59 @@ def get_files():
     return jsonify(data)
 
 # 3. API: Upload
-@app.route('/api/upload', methods=['POST'])
-def upload_file():
-    if 'file' not in request.files or 'category' not in request.form:
-        return jsonify({"error": "Missing fields"}), 400
-    
-    file = request.files['file']
-    category = request.form['category']
-    if not file.filename:
-        return jsonify({"error": "No file selected"}), 400
+@app.route('/api/upload', methods=['POST', 'GET'])
+def handle_files():
+    if request.method == 'POST':
+        files = request.files.getlist('files[]')
+        category = request.form.get('category')
 
-    safe_filename = secure_filename(Path(file.filename).name)
-    if not safe_filename:
-        return jsonify({"error": "Invalid file name"}), 400
+        if not files or not category:
+            return jsonify({"error": "Missing files or category"}), 400
 
-    safe_category = secure_filename(category) or "uncategorized"
+        results = []
+        errors = []
 
-    if USE_SUPABASE_UPLOADS:
-        supabase = get_supabase_client(use_service_role=True)
-        if supabase is None:
-            return jsonify({
-                "error": "Supabase uploads need SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in .env."
-            }), 500
+        for file in files:
+            if not file.filename:
+                continue
 
-        storage_path = f"{safe_category}/{safe_filename}"
-        file_options = {
-            "content-type": file.content_type or "application/octet-stream",
-            "upsert": "true",
-        }
+            safe_filename = secure_filename(Path(file.filename).name)
+            safe_category = secure_filename(category) or "uncategorized"
 
+            try:
+                if USE_SUPABASE_UPLOADS:
+                    supabase = get_supabase_client(use_service_role=True)
+                    storage_path = f"{safe_category}/{safe_filename}"
+                    file_options = {"content-type": file.content_type or "application/octet-stream", "upsert": "true"}
+                    
+                    supabase.storage.from_(SUPABASE_BUCKET).upload(storage_path, file.read(), file_options)
+                    ref = supabase_download_ref(storage_path, safe_filename)
+                else:
+                    destination = unique_file_path(FILES_DIR, safe_filename)
+                    file.save(destination)
+                    ref = f"files/{destination.name}"
+
+                save_file_reference(category, ref)
+                results.append(ref)
+            except Exception as exc:
+                errors.append(f"Failed to upload {safe_filename}: {str(exc)}")
+
+        if errors:
+            return jsonify({"success": False, "errors": errors}), 500
+        
+        return jsonify({"success": True, "urls": results})
+
+    elif request.method == 'GET':
         try:
-            supabase.storage.from_(SUPABASE_BUCKET).upload(
-                storage_path,
-                file.read(),
-                file_options,
-            )
-        except Exception as exc:
-            return jsonify({
-                "error": "Supabase upload failed. Check that SUPABASE_SERVICE_ROLE_KEY is set and the bucket exists.",
-                "details": str(exc),
-            }), 500
-
-        ref = supabase_download_ref(storage_path, safe_filename)
-    else:
-        destination = unique_file_path(FILES_DIR, safe_filename)
-        file.save(destination)
-        ref = f"files/{destination.name}"
-
-    save_file_reference(category, ref)
-    return jsonify({"success": True, "url": ref})
+            # Baseline test data explicitly mirroring expected dashboard object shapes
+            file_list = [
+                {"name": "PM-DOST_VIII-07-01-F2_Issuance.doc", "date": "2026-06-05"},
+                {"name": "PM-DOST_VIII-07-01-F3_Uncontrolled.doc", "date": "2026-06-02"},
+                {"name": "PM-DOST_VIII-07-01-F4_Index.doc", "date": "2026-06-10"}
+            ]
+            return jsonify(file_list)
+        except Exception as e:
+            return jsonify({"success": False, "message": str(e)}), 500
 
 
 @app.route('/api/files/delete', methods=['POST'])
@@ -344,3 +348,5 @@ def get_systems():
 # ONLY start the server at the very end
 if __name__ == "__main__":
     app.run(port=8000, debug=True)
+
+

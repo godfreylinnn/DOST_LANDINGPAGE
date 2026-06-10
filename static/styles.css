@@ -1684,6 +1684,13 @@ dd {
     width: 112px !important;
   }
 }
+.upload-controls {
+    display: flex;
+    align-items: center; /* Aligns them vertically */
+    gap: 10px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
 .upload-section {
     background-color: #f9fafb;
     margin-left: 30px;
@@ -1697,7 +1704,7 @@ dd {
     background-color: #2563eb; /* Green color from your screenshot */
     color: white;
     border: none;
-    padding: 5px 15px;
+    padding: 10px 15px;
     cursor: pointer;
     border-radius: 4px;
 }
@@ -1715,19 +1722,47 @@ dd {
 .custom-file-upload:hover { border-color: #3b82f6; color: #3b82f6; }
 
 .upload-btn {
-  background: #3b82f6;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  margin-top: 15px;
-  width: 50%;
- 
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 10px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    flex: 1; /* Takes more space */
+}
+
+#documentSearch {
+    width: 50%;
+    padding: 10px 15px;
+    margin-top: 10px;
+    margin-right: 40px;
+    border: 1px solid #d1d5db; /* Matches typical light gray borders */
+    border-radius: 6px;
+    font-size: 0.9rem;
+    box-sizing: border-box;
+    outline: none;
+}
+
+#documentSearch:focus {
+    border-color: #3b82f6; /* A subtle blue highlight when active */
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
 }
 
 .upload-btn:hover { background: #10b981; }
+.upload-btn:hover { background: #10b981; }
+
+/* New styles for the dropdown to match the button */
+.upload-controls select {
+    padding: 10px 15px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background-color: #ffffff;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #374151;
+    height: 42px; /* Matches the approximate height of the button */
+}
 
 /* The background overlay that dims the page */
 .floating-confirm-overlay {

@@ -1191,3 +1191,6 @@ function filterFiles() {
         }
     });
 }
+document.querySelector('.dropdown-toggle').addEventListener('click', function() {
+    this.parentElement.classList.toggle('active');
+});

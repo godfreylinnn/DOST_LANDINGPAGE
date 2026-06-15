@@ -21,6 +21,25 @@
           <small>Eastern Samar</small>
         </span>
       </a>
+       <nav class="main-nav" aria-label="Primary navigation">
+        <div class="nav-item-dropdown">
+        <button class="dropdown-toggle">About Us ▼</button>
+        <div class="dropdown-menu">
+            <button type="button" onclick="openAboutModal('history')">Historical Background</button>
+            <button type="button" onclick="openAboutModal('privacy')">DOST VIII's Privacy Policy</button>
+            <button type="button" onclick="openAboutModal('officials')">Key Officials</button>
+            <button type="button" onclick="openAboutModal('offices')">Offices</button>
+            <button type="button" onclick="openAboutModal('quality')">Quality Policy</button>
+            <button type="button" onclick="openAboutModal('mandate')">Mandate</button>
+            <button type="button" onclick="openAboutModal('vision')">Vision</button>
+            <button type="button" onclick="openAboutModal('mission')">Mission</button>
+            <button type="button" onclick="openAboutModal('core')">Core Values</button>
+        </div>
+    </div>
+        <a href="#forms">Forms</a>
+        <a href="#systems">Systems</a>
+        <a href="#contact">Contact</a>
+      </nav>
       <div class="topbar-tools">
         <div class="pst-clock" aria-live="polite">
           <span>Philippine Standard Time</span>
@@ -36,14 +55,16 @@
       </div>
     </header>
 
-    <aside id="site-sidebar" class="site-sidebar" aria-label="DOST page navigation">
-      <nav class="side-nav" aria-label="Primary navigation">
+<button id="sidebar-toggle" class="mobile-only">☰</button>
+
+<aside id="site-sidebar" class="site-sidebar">
+    <nav class="side-nav">
         <a href="#about">About Us</a>
         <a href="#forms">Forms</a>
         <a href="#systems">Systems</a>
         <a href="#contact">Contact</a>
-      </nav>
-    </aside>
+    </nav>
+</aside>
     <div id="sidebar-overlay" class="sidebar-overlay" hidden></div>
 
     <main>
@@ -103,17 +124,6 @@
             Eastern Samar build practical solutions for local needs, while providing digital access to office systems, 
             forms, and real-time updates.
           </p>
-          <div class="about-button-grid" aria-label="About Us links">
-            <button type="button" onclick="openAboutModal('history')">Historical Background</button>
-            <button type="button" onclick="openAboutModal('privacy')">DOST VIII's Privacy Policy</button>
-            <button type="button" onclick="openAboutModal('officials')">Key Officials</button>
-            <button type="button" onclick="openAboutModal('offices')">Offices</button>
-            <button type="button" onclick="openAboutModal('quality')">Quality Policy</button>
-            <button type="button" onclick="openAboutModal('mandate')">Mandate</button>
-            <button type="button" onclick="openAboutModal('vision')">Vision</button>
-            <button type="button" onclick="openAboutModal('mission')">Mission</button>
-            <button type="button" onclick="openAboutModal('core')">Core Values</button>
-          </div>
         </div>
         <div class="facebook-updates" aria-label="Official Facebook page">
           <a id="facebook-panel-link" class="facebook-panel-link" href="https://www.facebook.com/dostpstceasternsamar" target="_blank" rel="noreferrer">Visit Facebook Page</a>

@@ -175,7 +175,93 @@ a {
   margin-top: 3px;
   margin-left: 0;
 }
+/* Add these styles to your CSS 
+.site-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
+.main-nav {
+    display: flex;
+    gap: 20px;
+}
+
+.main-nav a {
+    color: white; 
+    text-decoration: none;
+} */
+/* --- DELETE/COMMENT OUT THE OLD .site-sidebar BLOCK AT LINE 179 --- */
+
+/* --- NEW GLOBAL DEFAULT (Desktop) --- */
+/* --- 1. REMOVE OR COMMENT OUT THE OLD BLOCK STARTING AT LINE 179 --- */
+/*
+.site-sidebar {
+    position: fixed;
+    ...
+}
+*/
+/* --- 1. DEFAULT (Always applied) --- */
+/* --- 1. DESKTOP DEFAULT (No changes needed here) --- */
+/* Ensure the sidebar is hidden by default on desktop */
+
+/*.site-sidebar {
+    display: none !important;
+}*/
+
+/* Ensure the main navbar is visible */
+.main-nav {
+    display: flex !important;
+    gap: 20px;
+}
+
+/* Hide the hamburger button on desktop */
+#sidebar-toggle {
+    display: none !important;
+}
+
+/* --- MOBILE (Small Screens) --- */
+@media (max-width: 768px) {
+    /* 1. Reset the sidebar to be a hidden overlay */
+    .site-sidebar {
+        display: none !important; /* Force hidden */
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        bottom: 0 !important;
+        width: 236px !important;
+        height: 100vh !important;
+        z-index: 9999 !important; /* On top of everything */
+        transform: translateX(-100%) !important; /* Start off-screen */
+        transition: transform 0.3s ease !important;
+    }
+
+    /* 2. When the JS adds 'sidebar-open' to the body, slide it in */
+  body.sidebar-open  {
+    display: flex !important;
+    transform: translateX(0) !important;
+    visibility: visible !important; /* Force visibility */
+}
+
+    /* 3. Hide the desktop navbar */
+    .main-nav {
+        display: none !important;
+    }
+
+    /* 4. Show the mobile toggle */
+    .mobile-only {
+        display: block !important;
+    }
+}
+
+
+/* Remove or comment out the block for .site-sidebar in your CSS to hide/remove it */
+/* 
+.site-sidebar {
+    ...
+}
+*/
+/*
 .site-sidebar {
   position: fixed;
   inset: calc(var(--topbar-height) + var(--topbar-offset)) auto 0 0;
@@ -215,10 +301,7 @@ main {
   margin-left: 0;
   padding-top: calc(var(--topbar-height) + var(--topbar-offset));
 }
-
-.side-nav {
-  display: flex;
-  flex-direction: column;
+  .main-nav {
   gap: 12px;
 }
 
@@ -239,6 +322,25 @@ main {
   color: var(--white);
   background: var(--blue);
   border-color: var(--cyan);
+}*/
+
+.main-nav {
+  gap: 12px;
+}
+
+.main-nav a {
+  margin-left: 20px;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  color: #eaf7ff;
+  text-decoration: none;
+ 
+}
+
+.main-nav a:hover {
+  color: black;
 }
 
 
@@ -688,7 +790,7 @@ h2 {
 }
 
 .nav-search {
-  width: clamp(230px, 25vw, 360px);
+  width: clamp(230px, 25vw, 230px);
   flex: 0 1 360px;
   box-shadow: none;
 }
@@ -1013,10 +1115,10 @@ dd {
     flex-direction: column;
   }
 
-  .site-sidebar {
+  /*.site-sidebar {
     width: min(82vw, 236px);
     padding: 16px 18px;
-  }
+  }*/
 
   .site-topbar {
     display: grid;
@@ -1889,4 +1991,85 @@ dd {
 @keyframes slideIn {
     from { transform: translateX(100%); opacity: 0; }
     to { transform: translateX(0); opacity: 1; }
+}
+/* 1. Make the container relative so the absolute dropdown anchors to it */
+.nav-item-dropdown {
+    position: relative;
+    display: inline-block; /* Or your preferred display style */
+}
+/* Ensure the navigation container is a flexbox */
+.main-nav {
+    display: flex;
+    align-items: center;    /* Vertically centers all links */
+    gap: 25px;              /* Consistent spacing between all items */
+}
+
+/* Base styles for all navigation items */
+.nav-item-dropdown, 
+.main-nav a {
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+    font-family: inherit;
+    cursor: pointer;
+    margin-left: 20px;
+}
+
+/* Reset for the About Us button to match links */
+.dropdown-toggle {
+    background: none;
+    border: none;
+    padding: 0;
+    color: white;
+    font-size: 16px;
+    font-family: inherit;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;               /* Space for the arrow icon */
+}
+
+/* If the drop-down menu is pushing content, ensure it's positioned correctly */
+.nav-item-dropdown {
+    position: relative;
+}
+/* Add hover effect to match nav links */
+.dropdown-toggle:hover {
+    color: black; /* A slightly lighter shade on hover */
+}
+
+/* 2. Position the menu directly below the button */
+.dropdown-menu {
+    position: absolute;
+    top: 100%; /* Places it right below the button */
+    left: 0;
+    z-index: 1000;
+    display: none; 
+    background: linear-gradient(90deg, #0050c8 0%, #4da3ff 100%);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    min-width: 160px;
+    border-radius: 4px;
+    padding: 10px 0;
+}
+
+/* 3. Show the menu when the parent is hovered (or toggled via JS) */
+.nav-item-dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+/* Optional: Style the buttons inside the dropdown */
+.dropdown-menu button {
+    display: block;
+    width: 100%;
+    padding: 10px 20px;
+    border: none;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+    color: white;
+}
+
+.dropdown-menu button:hover {
+  color: black;
+    background-color: var(--cyan);
 }

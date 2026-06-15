@@ -345,6 +345,7 @@ main {
 
 
 .hero {
+  margin-top: 50px;
   min-height: 460px;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(330px, 0.58fr);
@@ -660,6 +661,7 @@ h2 {
 .section-copy {
   position: sticky;
   top: calc(var(--topbar-height) + var(--topbar-offset) + 12px);
+  text-align: justify;
 }
 
 .section-copy p:not(.eyebrow) {
